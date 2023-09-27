@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Frontend Example</title>
+  </head>
+  <body>
+    <h1>Frontend Example</h1>
+
+    <h2>Set Data in Session:</h2>
+    <input type="text" id="dataInput" placeholder="Enter data" />
+    <button onclick="setDataInSession()">Set Data</button>
+
+    <h2>Get Data from Session:</h2>
+    <p id="sessionData">Session data will be displayed here.</p>
+
+    <script>
+      async function setDataInSession() {
+        const dataInput = document.getElementById("dataInput").value;
+        const response = await fetch("http://localhost:3000/set-session", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ data: dataInput }),
+          credentials: "include", // Включаем передачу куки сессии
+        });
+
+        if (response.ok) {
+          alert("Data stored in session!");
+          getSessionData(); // Получаем данные сразу после установки
+        } else {
+          alert("Failed to store data in session.");
+        }
+      }
+
+      async function getSessionData() {
+        const response = await fetch("http://localhost:3000/get-session", {
+          method: "GET",
+          credentials: "include", // Включаем передачу куки сессии
+        });
+
+        if (response.ok) {
+          const data = await response.json();
+          document.getElementById(
+            "sessionData"
+          ).textContent = `Session Data: ${data.data}`;
+        } else {
+          alert("Failed to get session data.");
+        }
+      }
+
+      getSessionData(); // Получаем данные сразу при загрузке страницы
+    </script>
+  </body>
+</html>
